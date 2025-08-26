@@ -27,7 +27,7 @@ dat <- dat %>%
   mutate(ww_lag1 = lag(ww, 1),
          x = log(ww_lag1 + eps)) %>%
   # train 2023 and delete first week since no delay
-  filter(year(week_end_date) == 2023, !is.na(x))
+  filter(year(week_end_date) == 2023, !is.na(x)) #create dataframe and delete NA value
 
 # 5) contrust the data for stan
 stan_data <- list(
