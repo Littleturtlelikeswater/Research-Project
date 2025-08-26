@@ -52,25 +52,25 @@ stan_newdata <- list(
 library(rstan)
 
 rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+options(mc.cores = parallel::detectCores())   # faster sampling
 
 # 1) stan model
-mod <- stan_model("stan_model.stan")
+mod <- stan_model("stan_model.stan")  # ps: change to file path
 
-# 2) combine data（在你上一步的脚本里已准备好 stan_data 和 x_new）
+# 2) make a data set combined with organzied data set and indenpendent variable for the prediction(the final week wastewater value)
 stan_data2 <- within(stan_data, { x_new <- as.numeric(stan_newdata$x_new) })
 
 # 3) sampling
 fit <- sampling(
   mod, data = stan_data2,
-  iter = 2000, warmup = 1000, chains = 4, seed = 123
+  iter = 2000, warmup = 1000, chains = 4, seed = 123 # 4 chains for the convergence
 )
 
-print(fit, pars = c("alpha","beta","phi","mu_new","y_pred"), probs = c(0.025, 0.5, 0.975))
+print(fit, pars = c("alpha","beta","phi","mu_new","y_pred"), probs = c(0.025, 0.5, 0.975)) # median + 95% interval
 
 # 4) 2024W01 posterior 
-post <- rstan::extract(fit)
-mu_new_draws <- post$mu_new         # the contious mean of posterior sample
+post <- rstan::extract(fit)         # get the sampling result which is vector
+mu_new_draws <- post$mu_new         # the mean of posterior sample
 y_pred_draws <- post$y_pred         # discrete cases of posterior sample
 
 # point estimate and interval
