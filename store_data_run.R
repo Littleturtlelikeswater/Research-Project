@@ -13,9 +13,9 @@ cases_site <- cases %>% filter(SampleLocation == site_id)
 
 # 3) combine and sort by week
 dat <- ww_site %>%
-  select(week_end_date, ww = copies_per_person_per_day) %>%
+  select(week_end_date, ww = copies_per_day_per_person) %>%
   inner_join(
-    cases_site %>% select(week_end_date, y = cases),
+    cases_site %>% select(week_end_date, y = case_7d_avg),
     by = "week_end_date"
   ) %>%
   mutate(week_end_date = ymd(week_end_date)) %>%
@@ -40,7 +40,7 @@ stan_data <- list(
 # prepare for 2024 week 1 #
 # need the last week of wastewater value for prediction
 last_row <- ww_site %>% mutate(week_end_date = ymd(week_end_date)) %>% arrange(week_end_date) %>% tail(1)
-x_new <- log(last_row$copies_per_person_per_day + eps)
+x_new <- log(last_row$copies_per_day_per_person + eps)
 
 stan_newdata <- list(
   x_new = as.array(x_new)  # y_pred of generated quantities in Stan
