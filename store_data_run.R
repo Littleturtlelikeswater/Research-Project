@@ -79,5 +79,22 @@ pred_ci <- quantile(y_pred_draws, c(0.025, 0.975))
 cat("2024W01 predict median）=", pred_median,
     "  95% interval=[", pred_ci[1], ", ", pred_ci[2], "]\n")
 
+#In the dynamic disease, we might use median rather than mean, because value might be super high at some point during the infection period.
+#ex. predicted sample cases (10 + 12 + 15 + 14 + 13 + 11 + 12 + 14 + 100), 
+# mean = 22.3, median = 13.
+# It will be more reasonable if we say there will be 13 cases rahter than 22.3 cases in the next week, since 90% prediction are located 
+# between 10% -15%
+
+
+
+
+
+
+
+
+
+
+
+
 
 
