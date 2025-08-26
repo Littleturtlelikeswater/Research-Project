@@ -34,33 +34,3 @@ generated quantities {
 }
 
 
-
-library(rstan)
-
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-
-# 1) stan model
-mod <- stan_model("nb_minimal.stan")
-
-# 2) combine data（在你上一步的脚本里已准备好 stan_data 和 x_new）
-stan_data2 <- within(stan_data, { x_new <- as.numeric(stan_newdata$x_new) })
-
-# 3) sampling
-fit <- sampling(
-  mod, data = stan_data2,
-  iter = 2000, warmup = 1000, chains = 4, seed = 123
-)
-
-print(fit, pars = c("alpha","beta","phi","mu_new","y_pred"), probs = c(0.025, 0.5, 0.975))
-
-# 4) 2024W01 posterior 
-post <- rstan::extract(fit)
-mu_new_draws <- post$mu_new         # the contious mean of posterior sample
-y_pred_draws <- post$y_pred         # discrete cases of posterior sample
-
-# point estimate and interval
-pred_median <- median(y_pred_draws)
-pred_ci <- quantile(y_pred_draws, c(0.025, 0.975))
-cat("2024W01 predict median）=", pred_median,
-    "  95% interval=[", pred_ci[1], ", ", pred_ci[2], "]\n")
