@@ -17,7 +17,7 @@ transformed parameters {
 }
 
 model {
-  // —— 弱信息先验（可按需调整）——
+  // just take easy, but how can I know what prior distribution should I used.
   alpha ~ normal(0, 5);
   beta  ~ normal(0, 2);
   phi   ~ exponential(1);     // 也可用 gamma(0.01, 0.01) 更“平坦”
