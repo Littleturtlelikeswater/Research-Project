@@ -55,7 +55,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 # 1) stan model
-mod <- stan_model("nb_minimal.stan")
+mod <- stan_model("stan_model.stan")
 
 # 2) combine data（在你上一步的脚本里已准备好 stan_data 和 x_new）
 stan_data2 <- within(stan_data, { x_new <- as.numeric(stan_newdata$x_new) })
