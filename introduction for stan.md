@@ -24,6 +24,6 @@ $$
 
 - $\(Y_t\)$: weekly cases at time $\(t\)$  
 - $\(\text{WW}_{t-1}\)$: wastewater measurement from the previous week (e.g., *copies_per_person_per_day*)   
-- $\(\alpha, \beta\)$: alpha is basic number of cases and beta is infectious rate 
+- $\(\alpha, \beta\)$: alpha is basic number of cases and Beta is the strength of relationship between wastewaster and case
 - $\(\phi\)$: dispersion parameter, where $\(\phi \to \infty\)$ approaches Poisson  
 - $\(\varepsilon\)$: small constant to avoid $\(\log 0\)$, e.g., $\(10^{-3}\)$  
