@@ -22,8 +22,8 @@ $$
 
 ### Explanation of terms
 
-- \(Y_t\): weekly cases at time \(t\)  
-- \(\text{WW}_{t-1}\): wastewater measurement from the previous week (e.g., *copies_per_person_per_day*)  
-- \(\alpha, \beta\): regression coefficients  
-- \(\phi\): dispersion parameter, where \(\phi \to \infty\) approaches Poisson  
-- \(\varepsilon\): small constant to avoid \(\log 0\), e.g., \(10^{-3}\)  
+- $\(Y_t\): weekly cases at time \(t\)$  
+- $\(\text{WW}_{t-1}\): wastewater measurement from the previous week (e.g., *copies_per_person_per_day*)$  
+- $\(\alpha, \beta\): regression coefficients$  
+- $\(\phi\): dispersion parameter, where \(\phi \to \infty\) approaches Poisson$  
+- $\(\varepsilon\): small constant to avoid \(\log 0\), e.g., \(10^{-3}\)$  
