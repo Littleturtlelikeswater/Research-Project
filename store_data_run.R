@@ -13,32 +13,32 @@ cases_site <- cases %>% filter(SampleLocation == site_id)
 
 # 3) combine and sort by week
 dat <- ww_site %>%
-  select(week_end_date, ww = copies_per_day_per_person) %>%
-  inner_join(
-    cases_site %>% select(week_end_date, y = case_7d_avg),
+  select(week_end_date, ww = copies_per_day_per_person) %>%  #named ww for copies_per_person_per_day
+  inner_join(                                                #combined with week 
+    cases_site %>% select(week_end_date, y = case_7d_avg), #named y for cases
     by = "week_end_date"
   ) %>%
-  mutate(week_end_date = ymd(week_end_date)) %>%
-  arrange(week_end_date)
+  mutate(week_end_date = ymd(week_end_date)) %>% # add one col for week
+  arrange(week_end_date) # sorted by time
 
 # 4)construct "last week wastewater" as independent variable(delay one week), take log
-eps <- 1e-3
+eps <- 1e-3 # set eps 
 dat <- dat %>%
-  mutate(ww_lag1 = lag(ww, 1),
-         x = log(ww_lag1 + eps)) %>%
+  mutate(ww_lag1 = lag(ww, 1),  #get last week wastewater value
+         x = log(ww_lag1 + eps)) %>%  # use log and avoiding zero value
   # train 2023 and delete first week since no delay
-  filter(year(week_end_date) == 2023, !is.na(x)) #create dataframe and delete NA value
+  filter(year(week_end_date) == 2023, !is.na(x)) #create dataframe and delete NA value(no last week wastewater value)
 
 # 5) contrust the data for stan
 stan_data <- list(
   N = nrow(dat),      # week number
   y = dat$y,          # case vector (length n)
-  x = dat$x,          # explain variable（log(last week WW+eps)）
+  x = dat$x,          # wastewater variable（log(last week WW+eps)）
   eps = eps
 )
 
 # prepare for 2024 week 1 #
-# need the last week of wastewater value for prediction
+# need the final week of wastewater value for prediction
 last_row <- ww_site %>% mutate(week_end_date = ymd(week_end_date)) %>% arrange(week_end_date) %>% tail(1)
 x_new <- log(last_row$copies_per_day_per_person + eps)
 
