@@ -27,8 +27,8 @@ model {
 }
 
 generated quantities {
-  real mu_new;                // 2024W01 的均值预测
-  int y_pred;                 // 2024W01 的单次后验预测（整数）
+  real mu_new;                // 2024W01 mean prediction
+  int y_pred;                 // 2024W01 one time prediction posterior
   mu_new = exp(alpha + beta * x_new);
   y_pred = neg_binomial_2_rng(mu_new, phi);
 }
@@ -37,17 +37,16 @@ generated quantities {
 
 library(rstan)
 
-# 一次性推荐设置（加速编译与采样）
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-# 1) 编译 Stan 模型
+# 1) stan model
 mod <- stan_model("nb_minimal.stan")
 
-# 2) 组合数据（在你上一步的脚本里已准备好 stan_data 和 x_new）
+# 2) combine data（在你上一步的脚本里已准备好 stan_data 和 x_new）
 stan_data2 <- within(stan_data, { x_new <- as.numeric(stan_newdata$x_new) })
 
-# 3) 采样
+# 3) sampling
 fit <- sampling(
   mod, data = stan_data2,
   iter = 2000, warmup = 1000, chains = 4, seed = 123
@@ -55,13 +54,13 @@ fit <- sampling(
 
 print(fit, pars = c("alpha","beta","phi","mu_new","y_pred"), probs = c(0.025, 0.5, 0.975))
 
-# 4) 拿到 2024W01 的后验预测
+# 4) 2024W01 posterior 
 post <- rstan::extract(fit)
-mu_new_draws <- post$mu_new         # 连续均值的后验样本
-y_pred_draws <- post$y_pred         # 离散病例数的后验样本
+mu_new_draws <- post$mu_new         # the contious mean of posterior sample
+y_pred_draws <- post$y_pred         # discrete cases of posterior sample
 
-# 点预测与区间
+# point estimate and interval
 pred_median <- median(y_pred_draws)
 pred_ci <- quantile(y_pred_draws, c(0.025, 0.975))
-cat("2024W01 预测（中位数）=", pred_median,
-    "  95%区间=[", pred_ci[1], ", ", pred_ci[2], "]\n")
+cat("2024W01 predict median）=", pred_median,
+    "  95% interval=[", pred_ci[1], ", ", pred_ci[2], "]\n")
